@@ -1,0 +1,101 @@
+﻿<UserControl x:Class="WegGooiApp2.ItemView"
+             x:Name="ThisUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+    xmlns:eim="clr-namespace:Microsoft.Expression.Interactivity.Media;assembly=Microsoft.Expression.Interactions"
+    xmlns:wegGooiApp2="clr-namespace:WegGooiApp2"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    d:DesignHeight="200" d:DesignWidth="480" LayoutUpdated="ThisUserControl_LayoutUpdated">
+
+    <UserControl.Resources>
+
+        <wegGooiApp2:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Storyboard x:Key="ShowMenu">
+            <DoubleAnimation Storyboard.TargetProperty="(Grid.Height)" 
+                             Storyboard.TargetName="Submenu"
+                             From="0" To="70" Duration="0:0:0.25" />
+
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Submenu"
+                                           Storyboard.TargetProperty="(Grid.Visibility)">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Visibility>Visible</Visibility>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+
+        </Storyboard>
+
+        <Storyboard x:Key="HideMenu">       
+
+            <DoubleAnimation Storyboard.TargetProperty="(Grid.Height)"
+                            Storyboard.TargetName="Submenu"
+                            From="70" To="0" Duration="0:0:0.25" />
+
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Submenu"
+                                           Storyboard.TargetProperty="(Grid.Visibility)">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.25">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Visibility>Collapsed</Visibility>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+
+        </Storyboard>        
+
+    </UserControl.Resources>
+
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- TEST ITEM -->
+        <Border Height="70" BorderBrush="Red" Background="Transparent" BorderThickness="1" HorizontalAlignment="Stretch">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Test Item" HorizontalAlignment="Stretch" FontSize="42" />
+                <Button Content="v" Grid.Column="1" Tap="Button_Tap" Tag="{Binding}">
+
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- SUBMENU -->
+        <Border x:Name="Submenu" Grid.Row="1" BorderBrush="Green" BorderThickness="1" 
+                Visibility="{Binding SubMenuIsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneTime}"
+                Background="Green" Height="0" Margin="0 0 0 0">
+            
+            <i:Interaction.Triggers>
+                <ec:DataTrigger Binding="{Binding SubMenuIsVisible}" Value="True">
+                    <ec:CallMethodAction MethodName="MenuEnabled"
+                                            TargetObject="{Binding ElementName=ThisUserControl, Mode=OneWay}" />
+
+                </ec:DataTrigger>
+
+                <ec:DataTrigger Binding="{Binding SubMenuIsVisible}" Value="False">
+                    <ec:CallMethodAction MethodName="MenuDisabled" 
+                                         TargetObject="{Binding ElementName=ThisUserControl, Mode=OneWay}" />
+                </ec:DataTrigger>
+            </i:Interaction.Triggers>
+            
+            <TextBlock Text="SubMenu" FontSize="42" />
+            
+        </Border>
+
+
+    </Grid>
+</UserControl>
